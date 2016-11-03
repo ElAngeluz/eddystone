@@ -15,6 +15,7 @@
 package com.google.sample.eddystonevalidator;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,8 +24,9 @@ import android.view.MenuItem;
 /**
  * MainActivity for the Eddystone Validator sample app.
  */
-public class MainActivity extends Activity {
-
+public class MainActivity extends Activity implements SetInfoDialog.InfoDialogListener {
+  public String username;
+  public String server;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -42,11 +44,29 @@ public class MainActivity extends Activity {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()){
       case R.id.Connect:
+        showInfoDialog();
         return true;
       case R.id.set_server:
         return true;
       default:
         return super.onOptionsItemSelected(item);
     }
+  }
+
+  public void showInfoDialog() {
+    // Create an instance of the dialog fragment and show it
+    DialogFragment dialog = new SetInfoDialog();
+    dialog.show(getFragmentManager(), "NoticeDialogFragment");
+  }
+
+
+  @Override
+  public void onDialogPositiveClick(DialogFragment dialog) {
+
+  }
+
+  @Override
+  public void onDialogNegativeClick(DialogFragment dialog) {
+
   }
 }
