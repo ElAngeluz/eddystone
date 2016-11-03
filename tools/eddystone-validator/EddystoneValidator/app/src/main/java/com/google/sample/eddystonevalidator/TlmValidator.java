@@ -30,9 +30,6 @@ public class TlmValidator {
 
   private static final String TAG = TlmValidator.class.getSimpleName();
 
-  // TODO: tests
-  static final byte MIN_SERVICE_DATA_LEN = 14;
-
   // TLM frames only support version 0x00 for now.
   static final byte EXPECTED_VERSION = 0x00;
 
@@ -80,20 +77,11 @@ public class TlmValidator {
       previousTlm = beacon.tlmServiceData.clone();
       if (Arrays.equals(beacon.tlmServiceData, serviceData)) {
         String err =
-            "TLM service data was identical to recent TLM frame:\n" + Utils
-                .toHexString(serviceData);
+            "TLM service data was identical to recent TLM frame:\n" + Utils.toHexString(serviceData);
         beacon.tlmStatus.errIdentialFrame = err;
         logDeviceError(deviceAddress, err);
         beacon.tlmServiceData = serviceData;
       }
-    }
-
-    if (serviceData.length < MIN_SERVICE_DATA_LEN) {
-      String err = String.format("TLM frame too short, needs at least %d bytes, got %d",
-          MIN_SERVICE_DATA_LEN, serviceData.length);
-      beacon.frameStatus.tooShortServiceData = err;
-      logDeviceError(deviceAddress, err);
-      return;
     }
 
     ByteBuffer buf = ByteBuffer.wrap(serviceData);
@@ -103,8 +91,7 @@ public class TlmValidator {
     byte version = buf.get();
     beacon.tlmStatus.version = String.format("0x%02X", version);
     if (version != EXPECTED_VERSION) {
-      String err = String.format("Bad TLM version, expected 0x%02X, got %02X",
-          EXPECTED_VERSION, version);
+      String err = String.format("Bad TLM version, expected 0x%02X, got %02X", EXPECTED_VERSION, version);
       beacon.tlmStatus.errVersion = err;
       logDeviceError(deviceAddress, err);
     }
@@ -113,9 +100,8 @@ public class TlmValidator {
     // it shouldn't be negative or unreasonably high.
     short voltage = buf.getShort();
     beacon.tlmStatus.voltage = String.valueOf(voltage);
-    if (voltage != 0 && (voltage < MIN_EXPECTED_VOLTAGE || voltage > MAX_EXPECTED_VOLTAGE)) {
-      String err = String.format("Expected TLM voltage to be between %d and %d, got %d",
-          MIN_EXPECTED_VOLTAGE, MAX_EXPECTED_VOLTAGE, voltage);
+    if (voltage < MIN_EXPECTED_VOLTAGE || voltage > MAX_EXPECTED_VOLTAGE) {
+      String err = String.format("Expected TLM voltage to be between %d and %d, got %d", MIN_EXPECTED_VOLTAGE, MAX_EXPECTED_VOLTAGE, voltage);
       beacon.tlmStatus.errVoltage = err;
       logDeviceError(deviceAddress, err);
     }
@@ -144,8 +130,7 @@ public class TlmValidator {
       logDeviceError(deviceAddress, err);
     }
     if (advCnt > MAX_EXPECTED_PDU_COUNT) {
-      String err = String.format("TLM ADV count %d is higher than expected max of %d",
-          advCnt, MAX_EXPECTED_PDU_COUNT);
+      String err = String.format("TLM ADV count %d is higher than expected max of %d", advCnt, MAX_EXPECTED_PDU_COUNT);
       beacon.tlmStatus.errPduCnt = err;
       logDeviceError(deviceAddress, err);
     }
@@ -167,8 +152,7 @@ public class TlmValidator {
       logDeviceError(deviceAddress, err);
     }
     if (uptime > MAX_EXPECTED_SEC_COUNT) {
-      String err = String.format("TLM time since boot %d is higher than expected max of %d",
-          uptime, MAX_EXPECTED_SEC_COUNT);
+      String err = String.format("TLM time since boot %d is higher than expected max of %d", uptime, MAX_EXPECTED_SEC_COUNT);
       beacon.tlmStatus.errSecCnt = err;
       logDeviceError(deviceAddress, err);
     }

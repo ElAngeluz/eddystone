@@ -11,17 +11,17 @@
     android:focusableInTouchMode="true"
     tools:context=".MainActivityFragment">
 
-    <EditText
-        android:id="@+id/filter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="Device Address / UID filter" />
-
     <ListView
         android:id="@+id/listView"
         android:listSelector="@android:color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Device Address / UID filter" />
 
     <TextView
         android:id="@+id/placeholder"

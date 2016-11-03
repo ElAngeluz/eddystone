@@ -55,11 +55,6 @@ public class BeaconArrayAdapter extends ArrayAdapter<Beacon> implements Filterab
     return filteredBeacons.get(position);
   }
 
-  private double distanceFromRssi(int rssi, int txPower0m) {
-    int pathLoss = txPower0m - rssi;
-    return Math.pow(10, (pathLoss - 41) / 20.0);
-  }
-
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
     if (convertView == null) {
@@ -78,14 +73,6 @@ public class BeaconArrayAdapter extends ArrayAdapter<Beacon> implements Filterab
 
     TextView rssi = (TextView) convertView.findViewById(R.id.rssi);
     rssi.setText(String.valueOf(beacon.rssi));
-
-    TextView distance = (TextView) convertView.findViewById(R.id.distance);
-    if (beacon.hasUidFrame) {
-      distance.setText(
-          String.format("%.2f m", distanceFromRssi(beacon.rssi, beacon.uidStatus.txPower)));
-    } else {
-      distance.setText("unknown");
-    }
 
     TextView uidLabel = (TextView) convertView.findViewById(R.id.uidLabel);
     TextView uidNamespace = (TextView) convertView.findViewById(R.id.uidNamespace);
@@ -107,8 +94,8 @@ public class BeaconArrayAdapter extends ArrayAdapter<Beacon> implements Filterab
         ((TextView) convertView.findViewById(R.id.uidErrors)).setText(beacon.uidStatus.getErrors());
       }
       uidNamespace.setText(beacon.uidStatus.uidValue.substring(0, 20));
-      uidInstance.setText(beacon.uidStatus.uidValue.substring(20, 32));
-      uidTxPower.setText(String.valueOf(beacon.uidStatus.txPower));
+      uidInstance.setText(beacon.uidStatus.uidValue.substring(20, 31));
+      uidTxPower.setText(beacon.uidStatus.txPower);
       uidGroup.setVisibility(View.VISIBLE);
     }
 
