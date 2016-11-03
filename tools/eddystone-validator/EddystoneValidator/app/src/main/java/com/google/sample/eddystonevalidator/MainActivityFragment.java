@@ -50,6 +50,7 @@ import java.util.Map;
  */
 public class MainActivityFragment extends Fragment {
 
+
   private static final String TAG = "EddystoneValidator";
   private static final int REQUEST_ENABLE_BLUETOOTH = 1;
 

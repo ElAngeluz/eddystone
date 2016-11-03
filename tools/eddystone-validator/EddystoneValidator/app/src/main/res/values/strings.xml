@@ -3,4 +3,7 @@
     <string name="app_name">CTI Google Project</string>
     <string name="Set_Server">Set Server</string>
     <string name="Connect">Connect</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="username">Set Username</string>
 </resources>

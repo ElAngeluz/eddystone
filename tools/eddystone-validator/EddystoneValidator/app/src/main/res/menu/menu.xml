@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/Connect"
         android:title="@string/Connect" />
-    <item android:id="@+id/set_server"
-        android:title="@string/Set_Server" />
+    <item android:id="@+id/Disconnect"
+        android:title="@string/disconnect" />
 </menu>
