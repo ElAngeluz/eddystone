@@ -7,12 +7,18 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 /**
- * Created by angel on 11/3/2016.
+ * Created by angeluz on 11/3/2016.
  */
 
 public class SetInfoDialog extends DialogFragment {
+
+    public TextView tvUsername;
+    private TextView tvServer;
+
     /* The activity that creates an instance of this dialog fragment must
          * implement this interface in order to receive event callbacks.
          * Each method passes the DialogFragment in case the host needs to query it. */
@@ -41,9 +47,15 @@ public class SetInfoDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        View rootView = inflater.inflate(R.layout.dialog_username, null,
+                false);
+        tvUsername = (TextView)rootView.findViewById(R.id.usernameText);
+        tvServer = (TextView)rootView.findViewById(R.id.serverText);
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
@@ -61,5 +73,9 @@ public class SetInfoDialog extends DialogFragment {
                     }
                 });
         return builder.create();
+    }
+
+    public String GetUsername(){
+        return tvUsername.getText().toString();
     }
 }

@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 /**
  * MainActivity for the Eddystone Validator sample app.
@@ -27,10 +29,17 @@ import android.view.MenuItem;
 public class MainActivity extends Activity implements SetInfoDialog.InfoDialogListener {
   public String username;
   public String server;
+
+  private TextView tvUsername;
+  private TextView tvServer;
+
+  DialogFragment dialog;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    dialog = new SetInfoDialog();
   }
 
   @Override
@@ -44,25 +53,19 @@ public class MainActivity extends Activity implements SetInfoDialog.InfoDialogLi
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()){
       case R.id.Connect:
-        showInfoDialog();
+        dialog.show(getFragmentManager(), "Info");
         return true;
-      case R.id.set_server:
+      case R.id.Disconnect:
         return true;
       default:
         return super.onOptionsItemSelected(item);
     }
   }
 
-  public void showInfoDialog() {
-    // Create an instance of the dialog fragment and show it
-    DialogFragment dialog = new SetInfoDialog();
-    dialog.show(getFragmentManager(), "NoticeDialogFragment");
-  }
-
 
   @Override
   public void onDialogPositiveClick(DialogFragment dialog) {
-
+    //username = dialog.
   }
 
   @Override
