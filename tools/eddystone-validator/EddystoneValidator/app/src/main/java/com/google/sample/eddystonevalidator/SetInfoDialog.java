@@ -16,8 +16,9 @@ import android.widget.TextView;
 
 public class SetInfoDialog extends DialogFragment {
 
-    public TextView tvUsername;
+    private TextView tvUsername;
     private TextView tvServer;
+    private TextView tvGroup;
 
     /* The activity that creates an instance of this dialog fragment must
          * implement this interface in order to receive event callbacks.
@@ -40,7 +41,7 @@ public class SetInfoDialog extends DialogFragment {
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(activity.toString()
-                    + " must implement InfoDialogListener");
+                    + "must implement InfoDialogListener");
         }
     }
 
@@ -52,10 +53,11 @@ public class SetInfoDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View rootView = inflater.inflate(R.layout.dialog_username, null,
-                false);
+        View rootView = inflater.inflate(R.layout.dialog_username, null,false);
+
         tvUsername = (TextView)rootView.findViewById(R.id.usernameText);
         tvServer = (TextView)rootView.findViewById(R.id.serverText);
+        tvGroup= (TextView)rootView.findViewById(R.id.groupnameText);
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
@@ -76,6 +78,20 @@ public class SetInfoDialog extends DialogFragment {
     }
 
     public String GetUsername(){
-        return tvUsername.getText().toString();
+        if (tvUsername.getText().toString()!=null)
+            return tvUsername.getText().toString();
+        return "Invitado";
+    }
+
+    public String GetServer(){
+        if (tvServer.getText().toString()!=null)
+            return tvServer.getText().toString();
+        return "104.154.240.176:18003/";
+    }
+
+    public String GetGroup(){
+        if (tvGroup.getText().toString()!=null)
+            return tvGroup.getText().toString();
+        return "test1";
     }
 }
