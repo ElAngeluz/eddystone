@@ -25,7 +25,6 @@ public class SetInfoDialog extends DialogFragment {
          * Each method passes the DialogFragment in case the host needs to query it. */
     public interface InfoDialogListener {
         void onDialogPositiveClick(DialogFragment dialog);
-        void onDialogNegativeClick(DialogFragment dialog);
     }
     // Use this instance of the interface to deliver action events
     InfoDialogListener mListener;
@@ -68,29 +67,24 @@ public class SetInfoDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         mListener.onDialogPositiveClick(SetInfoDialog.this);
                     }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogNegativeClick(SetInfoDialog.this);
-                    }
                 });
         return builder.create();
     }
 
     public String GetUsername(){
-        if (tvUsername.getText().toString()!=null)
+        if (!tvUsername.getText().toString().isEmpty())
             return tvUsername.getText().toString();
         return "Invitado";
     }
 
     public String GetServer(){
-        if (tvServer.getText().toString()!=null)
+        if (!tvServer.getText().toString().isEmpty())
             return tvServer.getText().toString();
         return "104.154.240.176:18003/";
     }
 
     public String GetGroup(){
-        if (tvGroup.getText().toString()!=null)
+        if (!tvGroup.getText().toString().isEmpty())
             return tvGroup.getText().toString();
         return "test1";
     }

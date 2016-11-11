@@ -17,39 +17,76 @@ package com.google.sample.eddystonevalidator;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
-import java.lang.reflect.Field;
 
 /**
  * MainActivity for the Eddystone Validator sample app.
  */
 public class MainActivity extends Activity implements SetInfoDialog.InfoDialogListener {
 
-  //DialogFragment dialogInfo;
+  SetInfoDialog dialogInfo;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
-  }
+    private String UserName;
+    private String Server;
+    private String Group;
 
-  @Override
-  public void onDialogPositiveClick(DialogFragment dialog) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-  }
+        dialogInfo = new SetInfoDialog();
+    }
 
-  @Override
-  public void onDialogNegativeClick(DialogFragment dialog) {
-
-  }
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        UserName =dialogInfo.GetUsername();
+        Group = dialogInfo.GetGroup();
+        Server = dialogInfo.GetServer();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return true;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+    {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+    }
+
+    public String getUserName() {
+        return UserName;
+    }
+
+    public String getGroup() {
+        return Group;
+    }
+
+    public String getServer() {
+        return Server;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.Connect:
+                dialogInfo.show(getFragmentManager(), "Info");
+                return true;
+            case R.id.Disconnect:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
