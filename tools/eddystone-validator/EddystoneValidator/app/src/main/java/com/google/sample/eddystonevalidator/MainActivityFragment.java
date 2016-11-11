@@ -16,6 +16,7 @@ package com.google.sample.eddystonevalidator;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -33,13 +34,19 @@ import android.os.ParcelUuid;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.lang.reflect.Field;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,8 +55,9 @@ import java.util.Map;
 /**
  * Main UI and logic for scanning and validation of results.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements SetInfoDialog.InfoDialogListener{
 
+  SetInfoDialog dialogInfo;
 
   private static final String TAG = "EddystoneValidator";
   private static final int REQUEST_ENABLE_BLUETOOTH = 1;
@@ -71,11 +79,16 @@ public class MainActivityFragment extends Fragment {
 
   private Map<String /* device address */, Beacon> deviceToBeaconMap = new HashMap<>();
 
-  private EditText filter;
+  public EditText filter;
 
   @Override
   public void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    setHasOptionsMenu(true);
+
+    dialogInfo = new SetInfoDialog();
+
     init();
     ArrayList<Beacon> arrayList = new ArrayList<>();
     arrayAdapter = new BeaconArrayAdapter(getActivity(), R.layout.beacon_list_item, arrayList);
@@ -130,6 +143,11 @@ public class MainActivityFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+    registerForContextMenu(view);
+
+    //dialogInfo.show(getFragmentManager(), "Info");
+
     filter = (EditText) view.findViewById(R.id.filter);
     filter.addTextChangedListener(new TextWatcher() {
       @Override
@@ -245,4 +263,34 @@ public class MainActivityFragment extends Fragment {
     Log.e(TAG, deviceAddress + ": " + err);
   }
 
+  @Override
+  public void onDialogPositiveClick(DialogFragment dialog) {
+    String Username = dialogInfo.GetUsername();
+  }
+
+  @Override
+  public void onDialogNegativeClick(DialogFragment dialog) {
+
+  }
+
+  @Override
+  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+  {
+    super.onCreateContextMenu(menu, v, menuInfo);
+    MenuInflater inflater = getActivity().getMenuInflater();
+    inflater.inflate(R.menu.menu, menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()){
+      case R.id.Connect:
+        dialogInfo.show(getFragmentManager(), "Info");
+        return true;
+      case R.id.Disconnect:
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
 }

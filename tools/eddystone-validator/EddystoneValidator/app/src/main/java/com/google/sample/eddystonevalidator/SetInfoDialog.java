@@ -20,7 +20,7 @@ public class SetInfoDialog extends DialogFragment {
     private TextView tvServer;
     private TextView tvGroup;
 
-    /* The activity that creates an instance of this dialog fragment must
+    /* The activity that creates an instance of this dialogInfo fragment must
          * implement this interface in order to receive event callbacks.
          * Each method passes the DialogFragment in case the host needs to query it. */
     public interface InfoDialogListener {
@@ -49,7 +49,7 @@ public class SetInfoDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 
-        // Use the Builder class for convenient dialog construction
+        // Use the Builder class for convenient dialogInfo construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
@@ -59,8 +59,8 @@ public class SetInfoDialog extends DialogFragment {
         tvServer = (TextView)rootView.findViewById(R.id.serverText);
         tvGroup= (TextView)rootView.findViewById(R.id.groupnameText);
 
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
+        // Inflate and set the layout for the dialogInfo
+        // Pass null as the parent view because its going in the dialogInfo layout
         builder.setView(inflater.inflate(R.layout.dialog_username, null))
                 // Add action buttons
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
