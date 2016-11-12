@@ -16,6 +16,8 @@ package com.google.sample.eddystonevalidator;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -30,6 +32,7 @@ import android.view.View;
 public class MainActivity extends Activity implements SetInfoDialog.InfoDialogListener {
 
   SetInfoDialog dialogInfo;
+    int mStackLevel=0;
 
     private String UserName;
     private String Server;
@@ -44,13 +47,6 @@ public class MainActivity extends Activity implements SetInfoDialog.InfoDialogLi
         dialogInfo = new SetInfoDialog();
 
         dialogInfo.show(getFragmentManager(), "Info");
-    }
-
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        UserName =dialogInfo.GetUsername();
-        Group = dialogInfo.GetGroup();
-        Server = dialogInfo.GetServer();
     }
 
     @Override
@@ -84,12 +80,38 @@ public class MainActivity extends Activity implements SetInfoDialog.InfoDialogLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.Connect:
-                dialogInfo.show(getFragmentManager(), "Info");
+                showDialog();
                 return true;
             case R.id.Disconnect:
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    void showDialog() {
+
+        mStackLevel++;
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("info");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        DialogFragment newFragment = dialogInfo.newInstance(mStackLevel);
+        newFragment.show(ft, "info");
+    }
+
+    @Override
+    public void onDialogPositiveClick(String _User, String _Server, String _Group) {
+        UserName = _User;
+        Server = _Server;
+        Group  = _Group;
     }
 }
