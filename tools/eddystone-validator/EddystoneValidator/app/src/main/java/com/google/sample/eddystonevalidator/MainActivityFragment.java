@@ -40,6 +40,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,12 +58,11 @@ public class MainActivityFragment extends Fragment{
 
   // An aggressive scan for nearby devices that reports immediately.
   private static final ScanSettings SCAN_SETTINGS =
-      new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).setReportDelay(0)
-          .build();
+      new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).setReportDelay(0).build();
 
   // The Eddystone Service UUID, 0xFEAA.
   private static final ParcelUuid EDDYSTONE_SERVICE_UUID =
-      ParcelUuid.fromString("0000FEAA-0000-1000-8000-00805F9B34FB");
+    ParcelUuid.fromString("0000FEAA-0000-1000-8000-00805F9B34FB");
 
   private BluetoothLeScanner scanner;
   private BeaconArrayAdapter arrayAdapter;
@@ -113,7 +115,9 @@ public class MainActivityFragment extends Fragment{
         Log.v(TAG, deviceAddress + " " + Utils.toHexString(serviceData));
         validateServiceData(deviceAddress, serviceData);
 
-        CargarDatos();
+        //CargarDatos(); // no sirve si aun no se esta pasando correctamente los datos desde el dialog
+
+          toJSON();
       }
 
       @Override
@@ -150,11 +154,7 @@ public class MainActivityFragment extends Fragment{
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-    //CargarDatos();
-
     registerForContextMenu(view);
-
-    //dialogInfo.show(getFragmentManager(), "Info");
 
     filter = (EditText) view.findViewById(R.id.filter);
     filter.addTextChangedListener(new TextWatcher() {
@@ -262,13 +262,39 @@ public class MainActivityFragment extends Fragment{
     arrayAdapter.notifyDataSetChanged();
   }
 
-  private void logErrorAndShowToast(String message) {
-    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-    Log.e(TAG, message);
-  }
+    private void logErrorAndShowToast(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        Log.e(TAG, message);
+    }
 
-  private void logDeviceError(String deviceAddress, String err) {
-    Log.e(TAG, deviceAddress + ": " + err);
-  }
+    private void logDeviceError(String deviceAddress, String err) {
+        Log.e(TAG, deviceAddress + ": " + err);
+    }
 
+    private String toJSON(){
+        JSONObject jsonObject= new JSONObject();
+        ArrayList<JBeacon> arrayJBeacons = new ArrayList<JBeacon>();
+        Beacon b;
+        JBeacon jb;
+        try {
+            jsonObject.put("group", _Group);
+            jsonObject.put("username", _User);
+
+            for (int x=0; x<arrayAdapter.getCount();x++){
+                b = arrayAdapter.getItem(x);
+                jb = new JBeacon();
+                jb.setAddress(b.deviceAddress);
+                jb.setRssi(b.rssi);
+                arrayJBeacons.add(jb);
+            }
+
+            jsonObject.put("wifi-fingerprint",arrayJBeacons.toString());
+
+            return jsonObject.toString();
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
