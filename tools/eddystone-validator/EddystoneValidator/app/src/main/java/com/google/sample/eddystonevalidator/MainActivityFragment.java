@@ -80,6 +80,10 @@ public class MainActivityFragment extends Fragment{
   public void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    _Server = getResources().getString(R.string.serverDefault);
+    _User = getResources().getString(R.string.usernameDefault);
+    _Group = getResources().getString(R.string.groupDefault);
+
     setHasOptionsMenu(true);
 
     init();
@@ -108,6 +112,8 @@ public class MainActivityFragment extends Fragment{
         byte[] serviceData = scanRecord.getServiceData(EDDYSTONE_SERVICE_UUID);
         Log.v(TAG, deviceAddress + " " + Utils.toHexString(serviceData));
         validateServiceData(deviceAddress, serviceData);
+
+        CargarDatos();
       }
 
       @Override
@@ -144,7 +150,7 @@ public class MainActivityFragment extends Fragment{
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-    CargarDatos();
+    //CargarDatos();
 
     registerForContextMenu(view);
 

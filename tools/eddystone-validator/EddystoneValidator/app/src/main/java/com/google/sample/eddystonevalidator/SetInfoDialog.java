@@ -74,18 +74,18 @@ public class SetInfoDialog extends DialogFragment {
     public String GetUsername(){
         if (!tvUsername.getText().toString().isEmpty())
             return tvUsername.getText().toString();
-        return "Invitado";
+        return "Invitado"; // por algun motivo aun no resulto esta primera debe set su valor predeterminado para que funcione
     }
 
     public String GetServer(){
         if (!tvServer.getText().toString().isEmpty())
             return tvServer.getText().toString();
-        return "104.154.240.176:18003/";
+        return getResources().getString(R.string.serverDefault);
     }
 
     public String GetGroup(){
         if (!tvGroup.getText().toString().isEmpty())
             return tvGroup.getText().toString();
-        return "test1";
+        return getResources().getString(R.string.groupDefault);
     }
 }

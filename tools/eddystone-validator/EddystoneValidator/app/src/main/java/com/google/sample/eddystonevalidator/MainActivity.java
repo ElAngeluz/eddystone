@@ -35,12 +35,15 @@ public class MainActivity extends Activity implements SetInfoDialog.InfoDialogLi
     private String Server;
     private String Group;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         dialogInfo = new SetInfoDialog();
+
+        dialogInfo.show(getFragmentManager(), "Info");
     }
 
     @Override
