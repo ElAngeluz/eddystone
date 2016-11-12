@@ -24,7 +24,8 @@ public class SetInfoDialog extends DialogFragment {
          * implement this interface in order to receive event callbacks.
          * Each method passes the DialogFragment in case the host needs to query it. */
     public interface InfoDialogListener {
-        void onDialogPositiveClick(DialogFragment dialog);
+
+        void onDialogPositiveClick(String _User, String _Server, String _Group);
     }
     // Use this instance of the interface to deliver action events
     InfoDialogListener mListener;
@@ -46,46 +47,47 @@ public class SetInfoDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        return new AlertDialog.Builder(getActivity())
+                .setTitle("Data")
+                .setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
 
+                                View rootView = getActivity().getLayoutInflater().inflate(R.layout.dialog_username, null,false);
+                                tvUsername = (TextView)rootView.findViewById(R.id.usernameText);
+                                tvServer = (TextView)rootView.findViewById(R.id.serverText);
+                                tvGroup= (TextView)rootView.findViewById(R.id.groupnameText);
 
-        // Use the Builder class for convenient dialogInfo construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+                                if (tvUsername.getText().toString().isEmpty())
+                                    tvUsername.setText(getResources().getString(R.string.usernameDefault));
 
-        View rootView = inflater.inflate(R.layout.dialog_username, null,false);
+                                if (tvServer.getText().toString().isEmpty())
+                                    tvServer.setText(getResources().getString(R.string.serverDefault));
 
-        tvUsername = (TextView)rootView.findViewById(R.id.usernameText);
-        tvServer = (TextView)rootView.findViewById(R.id.serverText);
-        tvGroup= (TextView)rootView.findViewById(R.id.groupnameText);
+                                if (tvGroup.getText().toString().isEmpty())
+                                    tvGroup.setText(getResources().getString(R.string.groupDefault));
 
-        // Inflate and set the layout for the dialogInfo
-        // Pass null as the parent view because its going in the dialogInfo layout
-        builder.setView(inflater.inflate(R.layout.dialog_username, null))
-                // Add action buttons
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogPositiveClick(SetInfoDialog.this);
-                    }
-                });
-        return builder.create();
+                                mListener.onDialogPositiveClick(
+                                        tvUsername.getText().toString(),
+                                        tvServer.getText().toString(),
+                                        tvGroup.getText().toString());
+                            }
+                        }
+                )
+                .setView(getActivity().getLayoutInflater().inflate(R.layout.dialog_username, null))
+                .create();
+
     }
 
-    public String GetUsername(){
-        if (!tvUsername.getText().toString().isEmpty())
-            return tvUsername.getText().toString();
-        return "Invitado"; // por algun motivo aun no resulto esta primera debe set su valor predeterminado para que funcione
+    static SetInfoDialog newInstance(int num) {
+        SetInfoDialog f = new SetInfoDialog();
+
+        // Supply num input as an argument.
+        Bundle args = new Bundle();
+        args.putInt("num", num);
+        f.setArguments(args);
+
+        return f;
     }
 
-    public String GetServer(){
-        if (!tvServer.getText().toString().isEmpty())
-            return tvServer.getText().toString();
-        return getResources().getString(R.string.serverDefault);
-    }
-
-    public String GetGroup(){
-        if (!tvGroup.getText().toString().isEmpty())
-            return tvGroup.getText().toString();
-        return getResources().getString(R.string.groupDefault);
-    }
 }
