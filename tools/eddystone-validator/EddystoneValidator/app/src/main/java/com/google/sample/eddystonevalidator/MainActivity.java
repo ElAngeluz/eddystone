@@ -25,6 +25,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import static android.os.Process.*;
+
 
 /**
  * MainActivity for the Eddystone Validator sample app.
@@ -83,6 +85,8 @@ public class MainActivity extends Activity implements SetInfoDialog.InfoDialogLi
                 showDialog();
                 return true;
             case R.id.Disconnect:
+                killProcess(myPid());
+                super.onDestroy();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

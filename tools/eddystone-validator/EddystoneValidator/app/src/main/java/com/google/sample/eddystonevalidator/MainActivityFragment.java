@@ -93,7 +93,7 @@ public class MainActivityFragment extends Fragment{
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        cliente = new HttpHandler();
+        cliente = new HttpHandler(); // para enviar los datos al servidor
 
         _Server = getResources().getString(R.string.serverDefault);
         _User = getResources().getString(R.string.usernameDefault);
@@ -101,7 +101,7 @@ public class MainActivityFragment extends Fragment{
 
         init();
 
-        ArrayList<Beacon> arrayList = new ArrayList<>();
+        final ArrayList<Beacon> arrayList = new ArrayList<>();
         arrayAdapter = new BeaconArrayAdapter(getActivity(), R.layout.beacon_list_item, arrayList);
         scanFilters = new ArrayList<>();
         scanFilters.add(new ScanFilter.Builder().setServiceUuid(EDDYSTONE_SERVICE_UUID).build());
@@ -124,7 +124,7 @@ public class MainActivityFragment extends Fragment{
         }
 
         byte[] serviceData = scanRecord.getServiceData(EDDYSTONE_SERVICE_UUID);
-        Log.v(TAG, deviceAddress + " " + Utils.toHexString(serviceData));
+        Log.v(TAG, deviceAddress + " " + result.getRssi());
         //validateServiceData(deviceAddress, serviceData);
 
         //CargarDatos(); // no sirve si aun no se esta pasando correctamente los datos desde el dialog
@@ -196,10 +196,10 @@ public class MainActivityFragment extends Fragment{
 
   @Override
   public void onPause() {
-    super.onPause();
+    super.onPause();/*
     if (scanner != null) {
       scanner.stopScan(scanCallback);
-    }
+    }*/
   }
 
   @Override
