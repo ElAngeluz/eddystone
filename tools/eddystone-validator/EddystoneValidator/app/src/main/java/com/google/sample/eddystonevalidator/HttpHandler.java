@@ -1,5 +1,6 @@
 package com.google.sample.eddystonevalidator;
 
+import android.app.DownloadManager;
 import android.net.http.HttpResponseCache;
 import android.os.StrictMode;
 
@@ -15,6 +16,9 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+
+import static android.os.StrictMode.*;
 
 /**
  * Created by angel on 11/9/2016.
@@ -22,48 +26,39 @@ import java.net.URL;
 
 
 public class HttpHandler {
+    //navigator.app.loadUrl(servername + "login?group=" + groupname, { openExternal:true });
     public String request(String _urlString, String _Data) {
-        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        //StrictMode.setThreadPolicy(policy);
+        ThreadPolicy policy = new ThreadPolicy.Builder().permitAll().build();
+        setThreadPolicy(policy);
 
         StringBuffer chaine = new StringBuffer("");
+        HttpURLConnection connection = null;
         try{
             URL url = new URL(_urlString);
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-
+            connection = (HttpURLConnection)url.openConnection();
             connection.setDoInput(true);
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
 
+            //connection.setRequestProperty("Content-Type", "text/plain");
+            //connection.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");
+            //connection.setRequestProperty("Content-Type","application/json");
 
-            connection.setChunkedStreamingMode(0);
+            connection.setRequestProperty("charset", "utf-8");
+            connection.setUseCaches (false);
+            //connection.setChunkedStreamingMode(0);
 
             connection.setRequestProperty("User-Agent", "");
 
-            connection.connect();
+            //connection.connect();
 
+            //connection.getOutputStream().write(_Data.getBytes("UTF-8"));
 
-            DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-
-            wr.writeBytes(_Data);
-            wr.flush();
-            wr.close();
-
-            /*
             OutputStream out = new BufferedOutputStream(connection.getOutputStream());
             //OutputStream out = connection.getOutputStream();
 
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(out, "UTF-8"));
-
-            writer.write(_Data);
-            writer.flush();
-            writer.close();
+            out.write(_Data.getBytes());
             out.close();
-            */
-
-
-            connection.setDoInput(true);
 
 
             InputStream inputStream = connection.getInputStream();
@@ -77,12 +72,10 @@ public class HttpHandler {
         catch (IOException e) {
             // Writing exception to log
             e.printStackTrace();
+        }finally {
+            connection.disconnect();
         }
         return chaine.toString();
 
     }
-
-    private void writeStream(OutputStream out) {
-    }
-
 }
