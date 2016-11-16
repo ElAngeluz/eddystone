@@ -9,6 +9,6 @@
     <string name="disconnect">Disconnect</string>
     <string name="group">Set Group</string>
     <string name="usernameDefault">Invitado</string>
-    <string name="serverDefault">104.154.240.176:18003/</string>
+    <string name="serverDefault">http://104.154.240.176:18003/</string>
     <string name="groupDefault">test1</string>
 </resources>

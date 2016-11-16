@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.ParcelUuid;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,6 +41,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,6 +49,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.System.currentTimeMillis;
 
 /**
  * Main UI and logic for scanning and validation of results.
@@ -59,6 +63,8 @@ public class MainActivityFragment extends Fragment{
   // An aggressive scan for nearby devices that reports immediately.
   private static final ScanSettings SCAN_SETTINGS =
       new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).setReportDelay(0).build();
+
+    private final int interval = 9; // 3.5 Second
 
   // The Eddystone Service UUID, 0xFEAA.
   private static final ParcelUuid EDDYSTONE_SERVICE_UUID =
@@ -78,22 +84,28 @@ public class MainActivityFragment extends Fragment{
   private String _Server;
   private String _Group;
 
-  @Override
-  public void onCreate(final Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    HttpHandler cliente;
 
-    _Server = getResources().getString(R.string.serverDefault);
-    _User = getResources().getString(R.string.usernameDefault);
-    _Group = getResources().getString(R.string.groupDefault);
+    //send data to server
 
-    setHasOptionsMenu(true);
 
-    init();
-    ArrayList<Beacon> arrayList = new ArrayList<>();
-    arrayAdapter = new BeaconArrayAdapter(getActivity(), R.layout.beacon_list_item, arrayList);
-    scanFilters = new ArrayList<>();
-    scanFilters.add(new ScanFilter.Builder().setServiceUuid(EDDYSTONE_SERVICE_UUID).build());
-    scanCallback = new ScanCallback() {
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        cliente = new HttpHandler();
+
+        _Server = getResources().getString(R.string.serverDefault);
+        _User = getResources().getString(R.string.usernameDefault);
+        _Group = getResources().getString(R.string.groupDefault);
+
+        init();
+
+        ArrayList<Beacon> arrayList = new ArrayList<>();
+        arrayAdapter = new BeaconArrayAdapter(getActivity(), R.layout.beacon_list_item, arrayList);
+        scanFilters = new ArrayList<>();
+        scanFilters.add(new ScanFilter.Builder().setServiceUuid(EDDYSTONE_SERVICE_UUID).build());
+        scanCallback = new ScanCallback() {
       @Override
       public void onScanResult(int callbackType, ScanResult result) {
         ScanRecord scanRecord = result.getScanRecord();
@@ -113,11 +125,12 @@ public class MainActivityFragment extends Fragment{
 
         byte[] serviceData = scanRecord.getServiceData(EDDYSTONE_SERVICE_UUID);
         Log.v(TAG, deviceAddress + " " + Utils.toHexString(serviceData));
-        validateServiceData(deviceAddress, serviceData);
+        //validateServiceData(deviceAddress, serviceData);
 
         //CargarDatos(); // no sirve si aun no se esta pasando correctamente los datos desde el dialog
 
-          toJSON();
+          if (currentTimeMillis()%interval==0)
+              cliente.request(_Server,toJSON());
       }
 
       @Override
@@ -141,7 +154,8 @@ public class MainActivityFragment extends Fragment{
         }
       }
     };
-  }
+
+    }
 
   public void CargarDatos(){
     MainActivity _main = (MainActivity) getActivity();
@@ -288,7 +302,7 @@ public class MainActivityFragment extends Fragment{
                 arrayJBeacons.add(jb);
             }
 
-            jsonObject.put("wifi-fingerprint",arrayJBeacons.toString());
+            jsonObject.put("wifi-fingerprint",new JSONArray(arrayJBeacons.toString()));
 
             return jsonObject.toString();
         } catch (JSONException e) {

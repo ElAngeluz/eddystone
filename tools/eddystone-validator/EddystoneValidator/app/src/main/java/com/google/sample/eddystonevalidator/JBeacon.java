@@ -3,6 +3,8 @@ package com.google.sample.eddystonevalidator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 /**
  * Created by angel on 11/12/2016.
  */
@@ -28,16 +30,19 @@ public class JBeacon {
         this.rssi = rssi;
     }
 
+
     public String toString(){
+
         JSONObject jsonObject= new JSONObject();
         try {
-            jsonObject.put("mac", getAddress());
+            jsonObject.put("mac", getAddress().toString());
             jsonObject.put("rssi",getRssi());
             return jsonObject.toString();
-        }        catch (JSONException e) {
+        }catch (JSONException e) {
         // TODO Auto-generated catch block
-        e.printStackTrace();
-        return null;
+            e.printStackTrace();
+            return null;
+        }
     }
-    }
+
 }
