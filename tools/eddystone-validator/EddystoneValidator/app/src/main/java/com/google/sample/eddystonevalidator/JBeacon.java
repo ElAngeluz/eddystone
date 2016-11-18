@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 /**
+ * almacena los beacons en el
  * Created by angel on 11/12/2016.
  */
 

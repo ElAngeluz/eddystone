@@ -17,11 +17,6 @@ package com.google.sample.eddystonevalidator;
 class Beacon {
   final String deviceAddress;
   int rssi;
-  long timestamp = System.currentTimeMillis();
-
-  byte[] uidServiceData;
-  byte[] tlmServiceData;
-  byte[] urlServiceData;
 
   class UidStatus {
     String uidValue;
@@ -31,19 +26,6 @@ class Beacon {
     String errUid;
     String errRfu;
 
-    public String getErrors() {
-      StringBuilder sb = new StringBuilder();
-      if (errTx != null) {
-        sb.append(errTx).append("\n");
-      }
-      if (errUid != null) {
-        sb.append(errUid).append("\n");
-      }
-      if (errRfu != null) {
-        sb.append(errRfu).append("\n");
-      }
-      return sb.toString().trim();
-    }
   }
 
   class TlmStatus {
@@ -144,11 +126,6 @@ class Beacon {
     }
   }
 
-  boolean hasUidFrame;
-  UidStatus uidStatus = new UidStatus();
-
-  boolean hasTlmFrame;
-  TlmStatus tlmStatus = new TlmStatus();
 
   boolean hasUrlFrame;
   UrlStatus urlStatus = new UrlStatus();
@@ -168,8 +145,6 @@ class Beacon {
     return s == null
         || s.isEmpty()
         || deviceAddress.replace(":", "").toLowerCase().contains(s.toLowerCase())
-        || (uidStatus.uidValue != null
-            && uidStatus.uidValue.toLowerCase().contains(s.toLowerCase()))
         || (urlStatus.urlValue != null
             && urlStatus.urlValue.toLowerCase().contains(s.toLowerCase()));
   }

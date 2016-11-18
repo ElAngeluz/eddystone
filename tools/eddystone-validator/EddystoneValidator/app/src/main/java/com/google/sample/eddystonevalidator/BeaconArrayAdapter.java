@@ -33,9 +33,6 @@ import java.util.List;
  */
 public class BeaconArrayAdapter extends ArrayAdapter<Beacon> implements Filterable {
 
-  private static final int DARK_GREEN = Color.argb(255, 0, 150, 0);
-  private static final int DARK_RED = Color.argb(255, 150, 0, 0);
-
   private List<Beacon> allBeacons;
   private List<Beacon> filteredBeacons;
 
@@ -73,75 +70,6 @@ public class BeaconArrayAdapter extends ArrayAdapter<Beacon> implements Filterab
 
     TextView rssi = (TextView) convertView.findViewById(R.id.rssi);
     rssi.setText(String.valueOf(beacon.rssi));
-
-    TextView uidLabel = (TextView) convertView.findViewById(R.id.uidLabel);
-    TextView uidNamespace = (TextView) convertView.findViewById(R.id.uidNamespace);
-    TextView uidInstance = (TextView) convertView.findViewById(R.id.uidInstance);
-    TextView uidTxPower = (TextView) convertView.findViewById(R.id.uidTxPower);
-    View uidErrorGroup = convertView.findViewById(R.id.uidErrorGroup);
-
-    View uidGroup = convertView.findViewById(R.id.uidGroup);
-    if (!beacon.hasUidFrame) {
-      grey(uidLabel);
-      uidGroup.setVisibility(View.GONE);
-    } else {
-      if (beacon.uidStatus.getErrors().isEmpty()) {
-        green(uidLabel);
-        uidErrorGroup.setVisibility(View.GONE);
-      } else {
-        red(uidLabel);
-        uidErrorGroup.setVisibility(View.VISIBLE);
-        ((TextView) convertView.findViewById(R.id.uidErrors)).setText(beacon.uidStatus.getErrors());
-      }
-      uidNamespace.setText(beacon.uidStatus.uidValue.substring(0, 20));
-      uidInstance.setText(beacon.uidStatus.uidValue.substring(20, 31));
-      uidTxPower.setText(beacon.uidStatus.txPower);
-      uidGroup.setVisibility(View.VISIBLE);
-    }
-
-    TextView tlmLabel = (TextView) convertView.findViewById(R.id.tlmLabel);
-    TextView tlmVersion = (TextView) convertView.findViewById(R.id.tlmVersion);
-    TextView tlmVoltage = (TextView) convertView.findViewById(R.id.tlmVoltage);
-    TextView tlmTemp = (TextView) convertView.findViewById(R.id.tlmTemp);
-    TextView tlmAdvCnt = (TextView) convertView.findViewById(R.id.tlmAdvCount);
-    TextView tlmSecCnt = (TextView) convertView.findViewById(R.id.tlmSecCnt);
-    View tlmErrorGroup = convertView.findViewById(R.id.tlmErrorGroup);
-
-    View tlmGroup = convertView.findViewById(R.id.tlmGroup);
-    if (!beacon.hasTlmFrame) {
-      grey(tlmLabel);
-      tlmGroup.setVisibility(View.GONE);
-    } else {
-      if (beacon.tlmStatus.toString().isEmpty()) {
-        green(tlmLabel);
-        tlmErrorGroup.setVisibility(View.GONE);
-      } else {
-        red(tlmLabel);
-        tlmErrorGroup.setVisibility(View.VISIBLE);
-        ((TextView) convertView.findViewById(R.id.tlmErrors)).setText(beacon.tlmStatus.getErrors());
-
-      }
-      tlmVersion.setText(beacon.tlmStatus.version);
-      tlmVoltage.setText(beacon.tlmStatus.voltage);
-      tlmTemp.setText(beacon.tlmStatus.temp);
-      tlmAdvCnt.setText(beacon.tlmStatus.advCnt);
-      tlmSecCnt.setText(beacon.tlmStatus.secCnt);
-      tlmGroup.setVisibility(View.VISIBLE);
-    }
-
-    TextView urlLabel = (TextView) convertView.findViewById(R.id.urlLabel);
-    TextView urlStatus = (TextView) convertView.findViewById(R.id.urlStatus);
-    if (!beacon.hasUrlFrame) {
-      grey(urlLabel);
-      urlStatus.setText("");
-    } else {
-      if (beacon.urlStatus.getErrors().isEmpty()) {
-        green(urlLabel);
-      } else {
-        red(urlLabel);
-      }
-      urlStatus.setText(beacon.urlStatus.toString());
-    }
 
     LinearLayout frameStatusGroup = (LinearLayout) convertView.findViewById(R.id.frameStatusGroup);
     if (!beacon.frameStatus.getErrors().isEmpty()) {
@@ -187,17 +115,5 @@ public class BeaconArrayAdapter extends ArrayAdapter<Beacon> implements Filterab
         }
       }
     };
-  }
-
-  private void green(TextView v) {
-    v.setTextColor(DARK_GREEN);
-  }
-
-  private void red(TextView v) {
-    v.setTextColor(DARK_RED);
-  }
-
-  private void grey(TextView v) {
-    v.setTextColor(Color.GRAY);
   }
 }

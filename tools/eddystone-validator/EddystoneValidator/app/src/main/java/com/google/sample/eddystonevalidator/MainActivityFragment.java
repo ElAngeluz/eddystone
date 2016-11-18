@@ -95,10 +95,6 @@ public class MainActivityFragment extends Fragment{
 
         cliente = new HttpHandler(); // para enviar los datos al servidor
 
-        _Server = getResources().getString(R.string.serverDefault);
-        _User = getResources().getString(R.string.usernameDefault);
-        _Group = getResources().getString(R.string.groupDefault);
-
         init();
 
         final ArrayList<Beacon> arrayList = new ArrayList<>();
@@ -122,15 +118,12 @@ public class MainActivityFragment extends Fragment{
         } else {
           deviceToBeaconMap.get(deviceAddress).rssi = result.getRssi();
         }
-
-        byte[] serviceData = scanRecord.getServiceData(EDDYSTONE_SERVICE_UUID);
         Log.v(TAG, deviceAddress + " " + result.getRssi());
-        //validateServiceData(deviceAddress, serviceData);
 
         //CargarDatos(); // no sirve si aun no se esta pasando correctamente los datos desde el dialog
 
-          if (currentTimeMillis()%interval==0)
-              cliente.request(_Server,toJSON());
+          //if (currentTimeMillis()%interval==0)
+              //cliente.request(_Server,toJSON());
       }
 
       @Override
@@ -248,46 +241,18 @@ public class MainActivityFragment extends Fragment{
         }).show();
   }
 
-  // Checks the frame type and hands off the service data to the validation module.
-  private void validateServiceData(String deviceAddress, byte[] serviceData) {
-    Beacon beacon = deviceToBeaconMap.get(deviceAddress);
-    if (serviceData == null) {
-      String err = "Null Eddystone service data";
-      beacon.frameStatus.nullServiceData = err;
-      logDeviceError(deviceAddress, err);
-      return;
-    }
-    switch (serviceData[0]) {
-      case Constants.UID_FRAME_TYPE:
-        UidValidator.validate(deviceAddress, serviceData, beacon);
-        break;
-      case Constants.TLM_FRAME_TYPE:
-        TlmValidator.validate(deviceAddress, serviceData, beacon);
-        break;
-      case Constants.URL_FRAME_TYPE:
-        UrlValidator.validate(deviceAddress, serviceData, beacon);
-        break;
-      default:
-        String err = String.format("Invalid frame type byte %02X", serviceData[0]);
-        beacon.frameStatus.invalidFrameType = err;
-        logDeviceError(deviceAddress, err);
-        break;
-    }
-    arrayAdapter.notifyDataSetChanged();
-  }
-
     private void logErrorAndShowToast(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
         Log.e(TAG, message);
     }
 
-    private void logDeviceError(String deviceAddress, String err) {
-        Log.e(TAG, deviceAddress + ": " + err);
-    }
-
+    /**
+     * Funcion que convierte el array encontrado de los Beacons en una la sentencia jSON que recibe el servidor
+     * @return estructura Json para el servidor FIND
+     */
     private String toJSON(){
         JSONObject jsonObject= new JSONObject();
-        ArrayList<JBeacon> arrayJBeacons = new ArrayList<JBeacon>();
+        ArrayList<JBeacon> arrayJBeacons = new ArrayList<>();
         Beacon b;
         JBeacon jb;
         try {
