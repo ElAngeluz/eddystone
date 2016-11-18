@@ -18,63 +18,6 @@ class Beacon {
   final String deviceAddress;
   int rssi;
 
-  class UidStatus {
-    String uidValue;
-    String txPower;
-
-    String errTx;
-    String errUid;
-    String errRfu;
-
-  }
-
-  class TlmStatus {
-    String version;
-    String voltage;
-    String temp;
-    String advCnt;
-    String secCnt;
-
-    String errIdentialFrame;
-    String errVersion;
-    String errVoltage;
-    String errTemp;
-    String errPduCnt;
-    String errSecCnt;
-    String errRfu;
-
-    public String getErrors() {
-      StringBuilder sb = new StringBuilder();
-      if (errIdentialFrame != null) {
-        sb.append(errIdentialFrame).append("\n");
-      }
-      if (errVersion != null) {
-        sb.append(errVersion).append("\n");
-      }
-      if (errVoltage != null) {
-        sb.append(errVoltage).append("\n");
-      }
-      if (errTemp != null) {
-        sb.append(errTemp).append("\n");
-      }
-      if (errPduCnt != null) {
-        sb.append(errPduCnt).append("\n");
-      }
-      if (errSecCnt != null) {
-        sb.append(errSecCnt).append("\n");
-      }
-      if (errRfu != null) {
-        sb.append(errRfu).append("\n");
-      }
-      return sb.toString().trim();
-    }
-
-    @Override
-    public String toString() {
-      return getErrors();
-    }
-  }
-
   class UrlStatus {
     String urlValue;
     String urlNotSet;

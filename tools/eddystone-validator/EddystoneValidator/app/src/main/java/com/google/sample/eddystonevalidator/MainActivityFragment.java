@@ -39,6 +39,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -64,7 +65,7 @@ public class MainActivityFragment extends Fragment{
   private static final ScanSettings SCAN_SETTINGS =
       new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).setReportDelay(0).build();
 
-    private final int interval = 9; // 3.5 Second
+
 
   // The Eddystone Service UUID, 0xFEAA.
   private static final ParcelUuid EDDYSTONE_SERVICE_UUID =
@@ -86,14 +87,16 @@ public class MainActivityFragment extends Fragment{
 
     HttpHandler cliente;
 
-    //send data to server
-
+    private long time_Send;
+   final private long interval = 1750;
+    final private long wait = 550;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         cliente = new HttpHandler(); // para enviar los datos al servidor
+
+        time_Send = System.currentTimeMillis();
 
         init();
 
@@ -102,59 +105,81 @@ public class MainActivityFragment extends Fragment{
         scanFilters = new ArrayList<>();
         scanFilters.add(new ScanFilter.Builder().setServiceUuid(EDDYSTONE_SERVICE_UUID).build());
         scanCallback = new ScanCallback() {
-      @Override
-      public void onScanResult(int callbackType, ScanResult result) {
-        ScanRecord scanRecord = result.getScanRecord();
-        if (scanRecord == null) {
-          return;
-        }
+            @Override
+            public void onScanResult(int callbackType, final ScanResult result) {
+                ScanRecord scanRecord = result.getScanRecord();
+                if (scanRecord == null) {
+                    return;
+                }
 
-        String deviceAddress = result.getDevice().getAddress();
-        Beacon beacon;
-        if (!deviceToBeaconMap.containsKey(deviceAddress)) {
-          beacon = new Beacon(deviceAddress, result.getRssi());
-          deviceToBeaconMap.put(deviceAddress, beacon);
-          arrayAdapter.add(beacon);
-        } else {
-          deviceToBeaconMap.get(deviceAddress).rssi = result.getRssi();
-        }
-        Log.v(TAG, deviceAddress + " " + result.getRssi());
+                String deviceAddress = result.getDevice().getAddress();
+                Beacon beacon;
+                if (!deviceToBeaconMap.containsKey(deviceAddress)) {
+                    beacon = new Beacon(deviceAddress, result.getRssi());
+                    deviceToBeaconMap.put(deviceAddress, beacon);
+                    arrayAdapter.add(beacon);
+                } else {
+                    deviceToBeaconMap.get(deviceAddress).rssi = result.getRssi();
+                }
+                Log.v(TAG, deviceAddress + " " + result.getRssi());
 
-        //CargarDatos(); // no sirve si aun no se esta pasando correctamente los datos desde el dialog
+                EnviarDatos();
+            }
 
-          //if (currentTimeMillis()%interval==0)
-              //cliente.request(_Server,toJSON());
-      }
-
-      @Override
-      public void onScanFailed(int errorCode) {
-        switch (errorCode) {
-          case SCAN_FAILED_ALREADY_STARTED:
-            logErrorAndShowToast("SCAN_FAILED_ALREADY_STARTED");
-            break;
-          case SCAN_FAILED_APPLICATION_REGISTRATION_FAILED:
-            logErrorAndShowToast("SCAN_FAILED_APPLICATION_REGISTRATION_FAILED");
-            break;
-          case SCAN_FAILED_FEATURE_UNSUPPORTED:
-            logErrorAndShowToast("SCAN_FAILED_FEATURE_UNSUPPORTED");
-            break;
-          case SCAN_FAILED_INTERNAL_ERROR:
-            logErrorAndShowToast("SCAN_FAILED_INTERNAL_ERROR");
-            break;
-          default:
-            logErrorAndShowToast("Scan failed, unknown error code");
-            break;
-        }
-      }
-    };
+            @Override
+            public void onScanFailed(int errorCode) {
+                switch (errorCode) {
+                    case SCAN_FAILED_ALREADY_STARTED:
+                        logErrorAndShowToast("SCAN_FAILED_ALREADY_STARTED");
+                        break;
+                    case SCAN_FAILED_APPLICATION_REGISTRATION_FAILED:
+                        logErrorAndShowToast("SCAN_FAILED_APPLICATION_REGISTRATION_FAILED");
+                        break;
+                    case SCAN_FAILED_FEATURE_UNSUPPORTED:
+                        logErrorAndShowToast("SCAN_FAILED_FEATURE_UNSUPPORTED");
+                        break;
+                    case SCAN_FAILED_INTERNAL_ERROR:
+                        logErrorAndShowToast("SCAN_FAILED_INTERNAL_ERROR");
+                        break;
+                    default:
+                        logErrorAndShowToast("Scan failed, unknown error code");
+                        break;
+                }
+            }
+        };
 
     }
 
-  public void CargarDatos(){
+    public void EnviarDatos(){
+        if ((time_Send + interval)< System.currentTimeMillis()) {
+            if (CargarDatos())
+                cliente.request(_Server, toJSON());
+
+            try {
+                synchronized(this){
+                    wait(500);
+                }
+            }
+            catch(InterruptedException ex){
+            }
+
+            time_Send = System.currentTimeMillis();
+        }
+    }
+
+    /**
+     * trae los datos que se cargan desde el mainactivity para enviarlos
+     * @return true en caso de que tengan valores validos
+     */
+  public boolean CargarDatos(){
+
     MainActivity _main = (MainActivity) getActivity();
     _User = _main.getUserName();
     _Server = _main.getServer();
     _Group = _main.getGroup();
+      if (_User == null || _Server == null  || _Group ==null)
+            return false;
+      return true;
   }
 
   @Override
