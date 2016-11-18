@@ -87,6 +87,9 @@ public class MainActivity extends Activity {
         }
     }
 
+    /**
+     * Procedimiento que llama al alert Dialog para capturar los datos de incio de sesion en el servidor
+     */
     void showDialog2(){
 
         final View inflator = getLayoutInflater().inflate(R.layout.dialog_username, null);
