@@ -15,15 +15,15 @@
 package com.google.sample.eddystonevalidator;
 
 import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import static android.os.Process.*;
 
@@ -31,10 +31,7 @@ import static android.os.Process.*;
 /**
  * MainActivity for the Eddystone Validator sample app.
  */
-public class MainActivity extends Activity implements SetInfoDialog.InfoDialogListener {
-
-  SetInfoDialog dialogInfo;
-    int mStackLevel=0;
+public class MainActivity extends Activity {
 
     private String UserName;
     private String Server;
@@ -45,10 +42,7 @@ public class MainActivity extends Activity implements SetInfoDialog.InfoDialogLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        dialogInfo = new SetInfoDialog();
-
-        dialogInfo.show(getFragmentManager(), "Info");
+        showDialog2();
     }
 
     @Override
@@ -82,7 +76,7 @@ public class MainActivity extends Activity implements SetInfoDialog.InfoDialogLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.Connect:
-                showDialog();
+                showDialog2();
                 return true;
             case R.id.Disconnect:
                 killProcess(myPid());
@@ -93,29 +87,35 @@ public class MainActivity extends Activity implements SetInfoDialog.InfoDialogLi
         }
     }
 
-    void showDialog() {
+    void showDialog2(){
 
-        mStackLevel++;
+        final View inflator = getLayoutInflater().inflate(R.layout.dialog_username, null);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-        // DialogFragment.show() will take care of adding the fragment
-        // in a transaction.  We also want to remove any currently showing
-        // dialog, so make our own transaction and take care of that here.
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("info");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
+        alert.setTitle("Login");
+        alert.setView(inflator);
 
-        // Create and show the dialog.
-        DialogFragment newFragment = dialogInfo.newInstance(mStackLevel);
-        newFragment.show(ft, "info");
-    }
+        final EditText et1 = (EditText) inflator.findViewById(R.id.usernameText);
+        final EditText et2 = (EditText) inflator.findViewById(R.id.groupnameText);
+        final EditText et3 = (EditText) inflator.findViewById(R.id.serverText);
 
-    @Override
-    public void onDialogPositiveClick(String _User, String _Server, String _Group) {
-        UserName = _User;
-        Server = _Server;
-        Group  = _Group;
+        alert.setPositiveButton("Ready", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                if (et1.getText().toString().isEmpty())
+                    et1.setText(getResources().getString(R.string.usernameDefault));
+
+                if (et3.getText().toString().isEmpty())
+                    et3.setText(getResources().getString(R.string.serverDefault));
+
+                if (et2.getText().toString().isEmpty())
+                    et2.setText(getResources().getString(R.string.groupDefault));
+
+                UserName = et1.getText().toString();
+                Server = et3.getText().toString();
+                Group = et2.getText().toString();
+            }
+        });
+        alert.show();
     }
 }
