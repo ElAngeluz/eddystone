@@ -9,25 +9,24 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:focusableInTouchMode="true"
-    tools:context=".MainActivityFragment">
+    tools:context=".MainActivityFragment"
+    android:weightSum="1">
 
-    <ListView
-        android:id="@+id/listView"
-        android:listSelector="@android:color/transparent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/filter"
-        android:layout_width="wrap_content"
+    <Switch
+        android:text="No Tracking"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Device Address / UID filter" />
+        android:id="@+id/TrackButton"
+        android:textSize="20sp"
+        android:layout_weight="0.04" />
 
-    <TextView
-        android:id="@+id/placeholder"
-        android:text="No Eddystone devices detected or matched the filter..."
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="16dp" />
+    <pl.droidsonroids.gif.GifTextView
+        android:layout_width="102dp"
+        android:layout_height="83dp"
+        android:background="@drawable/loader3"
+        android:layout_gravity="center"
+        android:id="@+id/gifLoader" />
+
 
 </LinearLayout>
