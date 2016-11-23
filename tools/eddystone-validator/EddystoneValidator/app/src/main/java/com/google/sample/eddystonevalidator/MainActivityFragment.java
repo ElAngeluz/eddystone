@@ -29,17 +29,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.ParcelUuid;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TimePicker;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -51,7 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.System.currentTimeMillis;
 
 /**
  * Main UI and logic for scanning and validation of results.
@@ -64,8 +60,6 @@ public class MainActivityFragment extends Fragment{
   // An aggressive scan for nearby devices that reports immediately.
   private static final ScanSettings SCAN_SETTINGS =
       new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).setReportDelay(0).build();
-
-
 
   // The Eddystone Service UUID, 0xFEAA.
   private static final ParcelUuid EDDYSTONE_SERVICE_UUID =
@@ -86,6 +80,8 @@ public class MainActivityFragment extends Fragment{
   private String _Group;
 
     HttpHandler cliente;
+    private Switch swTracking;
+    private pl.droidsonroids.gif.GifTextView gif;
 
     private long time_Send;
    final private long interval = 1750;
@@ -155,7 +151,7 @@ public class MainActivityFragment extends Fragment{
             if (CargarDatos())
                 cliente.request(_Server, toJSON());
 
-            try {
+            try { //deja de escanear por un intervalo de tiempo
                 synchronized(this){
                     wait(500);
                 }
@@ -184,31 +180,24 @@ public class MainActivityFragment extends Fragment{
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_main, container, false);
-
+    final View view = inflater.inflate(R.layout.fragment_main, container, false);
+      swTracking = (Switch) view.findViewById(R.id.TrackButton);
+        swTracking.setChecked(false); //inicia apagado
+      gif = (pl.droidsonroids.gif.GifTextView) view.findViewById(R.id.gifLoader);
+      gif.setVisibility(view.INVISIBLE);
+      swTracking.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+          @Override
+          public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+              if (isChecked){
+                  gif.setVisibility(view.VISIBLE);
+                  onResume();
+              }else{
+                  scanner.stopScan(scanCallback);
+                  gif.setVisibility(view.INVISIBLE);
+              }
+          }
+      });
     registerForContextMenu(view);
-
-    filter = (EditText) view.findViewById(R.id.filter);
-    filter.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        // NOP
-      }
-
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-        // NOP
-      }
-
-      @Override
-      public void afterTextChanged(Editable s) {
-        arrayAdapter.getFilter().filter(filter.getText().toString());
-      }
-    });
-
-    ListView listView = (ListView) view.findViewById(R.id.listView);
-    listView.setAdapter(arrayAdapter);
-    listView.setEmptyView(view.findViewById(R.id.placeholder));
     return view;
   }
 
