@@ -37,7 +37,7 @@ public class BeaconArrayAdapter extends ArrayAdapter<Beacon> implements Filterab
   private List<Beacon> filteredBeacons;
 
   public BeaconArrayAdapter(Context context, int resource, List<Beacon> allBeacons) {
-    super(context, resource, allBeacons);
+    super(context, resource,allBeacons);
     this.allBeacons = allBeacons;
     this.filteredBeacons = allBeacons;
   }
@@ -50,37 +50,6 @@ public class BeaconArrayAdapter extends ArrayAdapter<Beacon> implements Filterab
   @Override
   public Beacon getItem(int position) {
     return filteredBeacons.get(position);
-  }
-
-  @Override
-  public View getView(int position, View convertView, ViewGroup parent) {
-    if (convertView == null) {
-      convertView = LayoutInflater.from(getContext())
-          .inflate(R.layout.beacon_list_item, parent, false);
-    }
-
-    // Note: this is a listView and the convertView object here is likely to be
-    // a recycled view of some other row that isn't in view. You need to set every
-    // field regardless of emptiness to avoid displaying erroneous data.
-
-    final Beacon beacon = getItem(position);
-
-    TextView deviceAddress = (TextView) convertView.findViewById(R.id.deviceAddress);
-    deviceAddress.setText(beacon.deviceAddress);
-
-    TextView rssi = (TextView) convertView.findViewById(R.id.rssi);
-    rssi.setText(String.valueOf(beacon.rssi));
-
-    LinearLayout frameStatusGroup = (LinearLayout) convertView.findViewById(R.id.frameStatusGroup);
-    if (!beacon.frameStatus.getErrors().isEmpty()) {
-      TextView frameStatus = (TextView) convertView.findViewById(R.id.frameStatus);
-      frameStatus.setText(beacon.frameStatus.toString());
-      frameStatusGroup.setVisibility(View.VISIBLE);
-    } else {
-      frameStatusGroup.setVisibility(View.GONE);
-    }
-
-    return convertView;
   }
 
   @Override
@@ -115,5 +84,20 @@ public class BeaconArrayAdapter extends ArrayAdapter<Beacon> implements Filterab
         }
       }
     };
+  }
+
+  public Boolean ExistBeacon(String _address){
+    for (int x=0;x<filteredBeacons.size();x++)
+      if (filteredBeacons.get(x).deviceAddress.equalsIgnoreCase(_address))
+        return true;
+    return false;
+  }
+
+  public Beacon getItem(String _address){
+    for (int x=0;x<filteredBeacons.size();x++)
+      if (filteredBeacons.get(x).deviceAddress.equalsIgnoreCase(_address))
+        return filteredBeacons.get(x);
+
+    return null;
   }
 }

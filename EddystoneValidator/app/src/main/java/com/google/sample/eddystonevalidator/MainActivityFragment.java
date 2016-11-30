@@ -71,10 +71,6 @@ public class MainActivityFragment extends Fragment{
   private List<ScanFilter> scanFilters;
   private ScanCallback scanCallback;
 
-  private Map<String /* device address */, Beacon> deviceToBeaconMap = new HashMap<>();
-
-  public EditText filter;
-
   private String _User;
   private String _Server;
   private String _Group;
@@ -84,8 +80,8 @@ public class MainActivityFragment extends Fragment{
     private pl.droidsonroids.gif.GifTextView gif;
 
     private long time_Send;
-   final private long interval = 1750;
-    final private long wait = 550;
+   final private long interval = 2050;
+    final private long wait = 950;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -96,28 +92,24 @@ public class MainActivityFragment extends Fragment{
 
         init();
 
-        final ArrayList<Beacon> arrayList = new ArrayList<>();
-        arrayAdapter = new BeaconArrayAdapter(getActivity(), R.layout.beacon_list_item, arrayList);
+
         scanFilters = new ArrayList<>();
         scanFilters.add(new ScanFilter.Builder().setServiceUuid(EDDYSTONE_SERVICE_UUID).build());
+        arrayAdapter = new BeaconArrayAdapter(getActivity(), R.layout.beacon_list_item, new ArrayList<Beacon>());
         scanCallback = new ScanCallback() {
             @Override
             public void onScanResult(int callbackType, final ScanResult result) {
+
                 ScanRecord scanRecord = result.getScanRecord();
                 if (scanRecord == null) {
                     return;
                 }
+                if (arrayAdapter.ExistBeacon(result.getDevice().getAddress()))
+                    arrayAdapter.getItem(result.getDevice().getAddress()).rssi = result.getRssi();
+                else
+                    arrayAdapter.add(new Beacon(result.getDevice().getAddress(), result.getRssi()));
 
-                String deviceAddress = result.getDevice().getAddress();
-                Beacon beacon;
-                if (!deviceToBeaconMap.containsKey(deviceAddress)) {
-                    beacon = new Beacon(deviceAddress, result.getRssi());
-                    deviceToBeaconMap.put(deviceAddress, beacon);
-                    arrayAdapter.add(beacon);
-                } else {
-                    deviceToBeaconMap.get(deviceAddress).rssi = result.getRssi();
-                }
-                Log.v(TAG, deviceAddress + " " + result.getRssi());
+                Log.v(TAG, result.getDevice().getAddress() + " " + result.getRssi());
 
                 EnviarDatos();
             }
@@ -126,7 +118,7 @@ public class MainActivityFragment extends Fragment{
             public void onScanFailed(int errorCode) {
                 switch (errorCode) {
                     case SCAN_FAILED_ALREADY_STARTED:
-                        logErrorAndShowToast("SCAN_FAILED_ALREADY_STARTED");
+                        //logErrorAndShowToast("SCAN_FAILED_ALREADY_STARTED");
                         break;
                     case SCAN_FAILED_APPLICATION_REGISTRATION_FAILED:
                         logErrorAndShowToast("SCAN_FAILED_APPLICATION_REGISTRATION_FAILED");
@@ -147,20 +139,23 @@ public class MainActivityFragment extends Fragment{
     }
 
     public void EnviarDatos(){
-        if ((time_Send + interval)< System.currentTimeMillis()) {
-            if (CargarDatos())
-                cliente.request(_Server, toJSON());
-
-            try { //deja de escanear por un intervalo de tiempo
-                synchronized(this){
-                    wait(500);
+        if (swTracking.isChecked()) {
+            onResume();
+            if ((time_Send + interval) < System.currentTimeMillis()) {
+                if (CargarDatos()) {
+                    cliente.request(_Server, toJSON());
                 }
-            }
-            catch(InterruptedException ex){
-            }
+                try { //deja de escanear por un intervalo de tiempo
+                    synchronized (this) {
+                        wait(wait);
+                    }
+                } catch (InterruptedException ex) {
+                }
 
-            time_Send = System.currentTimeMillis();
-        }
+                time_Send = System.currentTimeMillis();
+            }
+        }else
+            scanner.stopScan(scanCallback);
     }
 
     /**
@@ -267,19 +262,19 @@ public class MainActivityFragment extends Fragment{
     private String toJSON(){
         JSONObject jsonObject= new JSONObject();
         ArrayList<JBeacon> arrayJBeacons = new ArrayList<>();
-        Beacon b;
-        JBeacon jb;
+
         try {
             jsonObject.put("group", _Group);
             jsonObject.put("username", _User);
 
             for (int x=0; x<arrayAdapter.getCount();x++){
-                b = arrayAdapter.getItem(x);
-                jb = new JBeacon();
-                jb.setAddress(b.deviceAddress);
-                jb.setRssi(b.rssi);
+                JBeacon jb = new JBeacon();
+                jb.setAddress(arrayAdapter.getItem(x).deviceAddress);
+                jb.setRssi(arrayAdapter.getItem(x).rssi);
                 arrayJBeacons.add(jb);
             }
+
+            arrayAdapter.clear();
 
             jsonObject.put("wifi-fingerprint",new JSONArray(arrayJBeacons.toString()));
 
