@@ -22,3 +22,7 @@ Import the EddystoneValidator folder into Android Studio as an existing
 project and select `Run > Run app`.
 
 A pre-built APK is available in the [project's CTI releases](https://protowiki.cti.espol.edu.ec/index.php/Edificios_inteligentes_con_Google_IoT).
+
+## Find Documentation
+
+Existe un repositorio Find en el que se basa el aprendizaje de beacons [FIND](https://doc.internalpositioning.com/api/#post-track)
