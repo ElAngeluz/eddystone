@@ -9,6 +9,6 @@
     <string name="disconnect">Disconnect</string>
     <string name="group">Set Group</string>
     <string name="usernameDefault">Invitado</string>
-    <string name="serverDefault">http://navigator-cloud.appspot.com/track</string>
+    <string name="serverDefault">http://200.126.23.144:18003/track</string>
     <string name="groupDefault">test1</string>
 </resources>

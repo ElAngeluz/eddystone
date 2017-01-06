@@ -185,10 +185,12 @@ public class MainActivityFragment extends Fragment{
           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
               if (isChecked){
                   gif.setVisibility(view.VISIBLE);
+                  swTracking.setText("Tracking");
                   onResume();
               }else{
                   scanner.stopScan(scanCallback);
                   gif.setVisibility(view.INVISIBLE);
+                  swTracking.setText("No Tracking");
               }
           }
       });
