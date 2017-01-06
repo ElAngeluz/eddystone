@@ -29,11 +29,13 @@ Existe un repositorio Find en el que se basa el aprendizaje de beacons [FIND](ht
 
 
 ## ScreenShot
-
-![screenshot1edistone](https://cloud.githubusercontent.com/assets/10533576/21733197/2fc0e38a-d42b-11e6-9ec9-296966b36304.png)
-
-![screenshot2edistone](https://cloud.githubusercontent.com/assets/10533576/21733195/2fc09dd0-d42b-11e6-9d35-ae091591cff1.png)
-
-![screenshot3edistone](https://cloud.githubusercontent.com/assets/10533576/21733196/2fc0ac1c-d42b-11e6-8a86-51fdd5ab9cb0.png)
-
-![screenshot4edistone](https://cloud.githubusercontent.com/assets/10533576/21733194/2fc09f6a-d42b-11e6-8aea-8ad9b35b2f42.png)
+**App ScreenShot**
+<p align="center">
+  <img src="https://github.com/ElAngeluz/eddystone/blob/CTI/Images/Screenshot1Edistone.png" width="350"/>  
+  
+  <img src="https://github.com/ElAngeluz/eddystone/blob/CTI/Images/Screenshot2Edistone.png" width="350"/>  
+  
+  <img src="https://github.com/ElAngeluz/eddystone/blob/CTI/Images/Screenshot3Edistone.png" width="350"/>  
+  
+  <img src="https://github.com/ElAngeluz/eddystone/blob/CTI/Images/Screenshot4Edistone.png" width="350"/>  
+</p>
